@@ -1,0 +1,24 @@
+{
+    "Authors":[
+        {
+            "Id":1,
+            "Name":"Frank Herbet"
+        },
+        {
+            "Id":2,
+            "Name":"J. R. R. Tolkien"
+        },
+        {
+            "Id":3,
+            "Name":"George Orwell"
+        },
+        {
+            "Id":4,
+            "Name":"Aldous Huxley"
+        },
+        {
+            "Id":5,
+            "Name":"Isaac Asimov"
+        }
+    ]
+}
