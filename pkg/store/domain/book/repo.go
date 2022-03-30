@@ -100,7 +100,7 @@ func (b *BookRepository) DeleteById(id int) error {
 	return nil
 }
 
-//InsertSeedData
+//InsertSeedData Insert seed data
 func (b *BookRepository) InsertSeedData() error {
 	books, err := services.GetAllBooks()
 	if err != nil {
@@ -112,4 +112,11 @@ func (b *BookRepository) InsertSeedData() error {
 			FirstOrCreate(&book)
 	}
 	return nil
+}
+
+//SumOfBooks Get sum of books
+func (b *BookRepository) SumOfBooks() int64 {
+	var count int64
+	b.db.Table("books").Count(&count)
+	return count
 }

@@ -93,7 +93,7 @@ func (a *AuthorRepository) DeleteById(id int) error {
 	return nil
 }
 
-//InsertSeedData
+//InsertSeedData Insert seed data
 func (a *AuthorRepository) InsertSeedData() error {
 	authors, err := services.GetAllAuthors()
 	if err != nil {
@@ -105,4 +105,11 @@ func (a *AuthorRepository) InsertSeedData() error {
 			FirstOrCreate(&author)
 	}
 	return nil
+}
+
+//SumOfAuthor Get sum of all authors
+func (a *AuthorRepository) SumOfAuthor() int64 {
+	var count int64
+	a.db.Table("authors").Count(&count)
+	return count
 }
