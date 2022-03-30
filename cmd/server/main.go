@@ -37,7 +37,7 @@ func main() {
 
 	//Handle requests
 	http.HandleFunc("/authors", authorRepo.HandleFindAll)
-	http.HandleFunc("/authors/{id}", authorRepo.HandleFindById)
+	http.HandleFunc("/authors/{id:[0-9]+}", authorRepo.HandleFindById)
 	http.HandleFunc("/authors/name/{name}", authorRepo.HandleFindByName)
 	http.HandleFunc("/authors/non-deleted", authorRepo.HandleGetNonDeleted)
 	http.HandleFunc("/authors/{id}/books", authorRepo.HandleGetByIdWithBooks)
