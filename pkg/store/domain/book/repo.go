@@ -1,6 +1,10 @@
 package book
 
 import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"gorm.io/gorm"
 
 	model "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/model"
@@ -119,4 +123,131 @@ func (b *BookRepository) SumOfBooks() int64 {
 	var count int64
 	b.db.Table("books").Count(&count)
 	return count
+}
+
+//HandleFindAll Get all books
+func (b *BookRepository) HandleFindAll(w http.ResponseWriter, r *http.Request) {
+	books := b.FindAll()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books)
+}
+
+//HandleFindById Get book by id
+func (b *BookRepository) HandleFindById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	idNumber, _ := strconv.Atoi(id)
+	book := b.FindById(idNumber)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(book)
+}
+
+//HandleFindByAuthorID Get book by author id
+func (b *BookRepository) HandleFindByAuthorID(w http.ResponseWriter, r *http.Request) {
+	authorID := r.URL.Query().Get("author_id")
+	authorIDNumber, _ := strconv.Atoi(authorID)
+	books := b.FindByAuthorID(authorIDNumber)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books)
+}
+
+//HandleFindByTitle Get book by title
+func (b *BookRepository) HandleFindByTitle(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Query().Get("title")
+	books := b.FindByTitle(title)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books)
+}
+
+//HandleGetNonDeleted Get non deleted books
+func (b *BookRepository) HandleGetNonDeleted(w http.ResponseWriter, r *http.Request) {
+	books := b.GetNonDeleted()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books)
+}
+
+//HandleGetByIdWithAuthorName Get book by id and with authors names
+func (b *BookRepository) HandleGetByIdWithAuthorName(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	idNumber, _ := strconv.Atoi(id)
+	books := b.GetByIdWithAuthorName(idNumber)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books)
+}
+
+//HandleSumOfBooks Get sum of books
+func (b *BookRepository) HandleSumOfBooks(w http.ResponseWriter, r *http.Request) {
+	count := b.SumOfBooks()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(count)
+}
+
+//HandleInsert Insert new Book
+func (b *BookRepository) HandleInsert(w http.ResponseWriter, r *http.Request) {
+	var book Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	err := b.Insert(book)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(book)
+}
+
+//HandleUpdate Update book
+func (b *BookRepository) HandleUpdate(w http.ResponseWriter, r *http.Request) {
+	var book Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	err := b.Update(book)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(book)
+}
+
+//HandleDelete Delete book
+func (b *BookRepository) HandleDelete(w http.ResponseWriter, r *http.Request) {
+	var book Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	err := b.Delete(book)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(book)
+}
+
+//HandleDeleteById Delete book by id
+func (b *BookRepository) HandleDeleteById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	idNumber, _ := strconv.Atoi(id)
+	err := b.DeleteById(idNumber)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(id)
 }

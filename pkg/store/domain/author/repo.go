@@ -1,6 +1,10 @@
 package author
 
 import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+
 	model "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/model"
 	services "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/service"
 
@@ -112,4 +116,121 @@ func (a *AuthorRepository) SumOfAuthor() int64 {
 	var count int64
 	a.db.Table("authors").Count(&count)
 	return count
+}
+
+//HandleFindAll Find all authors
+func (a *AuthorRepository) HandleFindAll(w http.ResponseWriter, r *http.Request) {
+	authors := a.FindAll()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(authors)
+}
+
+//HandleFindById Find by id
+func (a *AuthorRepository) HandleFindById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	idNumber, _ := strconv.Atoi(id)
+	author := a.FindById(idNumber)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(author)
+}
+
+//HandleFindByName Find by name
+func (a *AuthorRepository) HandleFindByName(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	authors := a.FindByName(name)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(authors)
+}
+
+//HandleGetNonDeleted Get non deleted authors
+func (a *AuthorRepository) HandleGetNonDeleted(w http.ResponseWriter, r *http.Request) {
+	authors := a.GetNonDeleted()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(authors)
+}
+
+//HandleGetByIdWithBooks Get author by id and with books
+func (a *AuthorRepository) HandleGetByIdWithBooks(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	idNumber, _ := strconv.Atoi(id)
+	books := a.GetByIdWithBooks(idNumber)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books)
+}
+
+//HandleSumOfAuthor Get sum of all authors
+func (a *AuthorRepository) HandleSumOfAuthor(w http.ResponseWriter, r *http.Request) {
+	sum := a.SumOfAuthor()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(sum)
+}
+
+//HandleInsert Insert new author
+func (a *AuthorRepository) HandleInsert(w http.ResponseWriter, r *http.Request) {
+	var author Author
+	_ = json.NewDecoder(r.Body).Decode(&author)
+	err := a.Insert(author)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(author)
+}
+
+//HandleUpdate Update author
+func (a *AuthorRepository) HandleUpdate(w http.ResponseWriter, r *http.Request) {
+	var author Author
+	_ = json.NewDecoder(r.Body).Decode(&author)
+	err := a.Update(author)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(author)
+}
+
+//HandleDelete Delete author
+func (a *AuthorRepository) HandleDelete(w http.ResponseWriter, r *http.Request) {
+	var author Author
+	_ = json.NewDecoder(r.Body).Decode(&author)
+	err := a.Delete(author)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(author)
+}
+
+//HandleDeleteById Delete by id author
+func (a *AuthorRepository) HandleDeleteById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	idNumber, _ := strconv.Atoi(id)
+	err := a.DeleteById(idNumber)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(id)
 }
