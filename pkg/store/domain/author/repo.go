@@ -7,7 +7,7 @@ import (
 
 	model "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/model"
 	services "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/service"
-
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -128,7 +128,8 @@ func (a *AuthorRepository) HandleFindAll(w http.ResponseWriter, r *http.Request)
 
 //HandleFindById Find by id
 func (a *AuthorRepository) HandleFindById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	urlParams := mux.Vars(r)
+	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	author := a.FindById(idNumber)
 	w.Header().Set("Content-Type", "application/json")
@@ -138,7 +139,8 @@ func (a *AuthorRepository) HandleFindById(w http.ResponseWriter, r *http.Request
 
 //HandleFindByName Find by name
 func (a *AuthorRepository) HandleFindByName(w http.ResponseWriter, r *http.Request) {
-	name := r.URL.Query().Get("name")
+	urlParams := mux.Vars(r)
+	name := urlParams["name"]
 	authors := a.FindByName(name)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -155,7 +157,8 @@ func (a *AuthorRepository) HandleGetNonDeleted(w http.ResponseWriter, r *http.Re
 
 //HandleGetByIdWithBooks Get author by id and with books
 func (a *AuthorRepository) HandleGetByIdWithBooks(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	urlParams := mux.Vars(r)
+	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	books := a.GetByIdWithBooks(idNumber)
 	w.Header().Set("Content-Type", "application/json")
@@ -221,7 +224,8 @@ func (a *AuthorRepository) HandleDelete(w http.ResponseWriter, r *http.Request) 
 
 //HandleDeleteById Delete by id author
 func (a *AuthorRepository) HandleDeleteById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	urlParams := mux.Vars(r)
+	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	err := a.DeleteById(idNumber)
 	if err != nil {

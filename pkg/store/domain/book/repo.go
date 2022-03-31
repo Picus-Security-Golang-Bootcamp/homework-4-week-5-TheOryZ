@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 
 	model "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/model"
@@ -135,7 +136,8 @@ func (b *BookRepository) HandleFindAll(w http.ResponseWriter, r *http.Request) {
 
 //HandleFindById Get book by id
 func (b *BookRepository) HandleFindById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	urlParams := mux.Vars(r)
+	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	book := b.FindById(idNumber)
 	w.Header().Set("Content-Type", "application/json")
@@ -145,7 +147,8 @@ func (b *BookRepository) HandleFindById(w http.ResponseWriter, r *http.Request) 
 
 //HandleFindByAuthorID Get book by author id
 func (b *BookRepository) HandleFindByAuthorID(w http.ResponseWriter, r *http.Request) {
-	authorID := r.URL.Query().Get("author_id")
+	urlParams := mux.Vars(r)
+	authorID := urlParams["id"]
 	authorIDNumber, _ := strconv.Atoi(authorID)
 	books := b.FindByAuthorID(authorIDNumber)
 	w.Header().Set("Content-Type", "application/json")
@@ -155,7 +158,8 @@ func (b *BookRepository) HandleFindByAuthorID(w http.ResponseWriter, r *http.Req
 
 //HandleFindByTitle Get book by title
 func (b *BookRepository) HandleFindByTitle(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Query().Get("title")
+	urlParams := mux.Vars(r)
+	title := urlParams["title"]
 	books := b.FindByTitle(title)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -172,7 +176,8 @@ func (b *BookRepository) HandleGetNonDeleted(w http.ResponseWriter, r *http.Requ
 
 //HandleGetByIdWithAuthorName Get book by id and with authors names
 func (b *BookRepository) HandleGetByIdWithAuthorName(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	urlParams := mux.Vars(r)
+	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	books := b.GetByIdWithAuthorName(idNumber)
 	w.Header().Set("Content-Type", "application/json")
@@ -238,7 +243,8 @@ func (b *BookRepository) HandleDelete(w http.ResponseWriter, r *http.Request) {
 
 //HandleDeleteById Delete book by id
 func (b *BookRepository) HandleDeleteById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	urlParams := mux.Vars(r)
+	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	err := b.DeleteById(idNumber)
 	if err != nil {

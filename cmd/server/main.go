@@ -7,6 +7,7 @@ import (
 	postgres "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/store/common/db"
 	"github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/store/domain/author"
 	"github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/store/domain/book"
+	"github.com/gorilla/mux"
 
 	"github.com/joho/godotenv"
 )
@@ -36,28 +37,31 @@ func main() {
 	log.Println("Seed Datas inserted")
 
 	//Handle requests
-	http.HandleFunc("/authors", authorRepo.HandleFindAll)
-	http.HandleFunc("/authors/{id:[0-9]+}", authorRepo.HandleFindById)
-	http.HandleFunc("/authors/name/{name}", authorRepo.HandleFindByName)
-	http.HandleFunc("/authors/non-deleted", authorRepo.HandleGetNonDeleted)
-	http.HandleFunc("/authors/{id}/books", authorRepo.HandleGetByIdWithBooks)
-	http.HandleFunc("/authors/sum", authorRepo.HandleSumOfAuthor)
-	http.HandleFunc("/authors/insert", authorRepo.HandleInsert)
-	http.HandleFunc("/authors/update", authorRepo.HandleUpdate)
-	http.HandleFunc("/authors/delete", authorRepo.HandleDelete)
-	http.HandleFunc("/authors/delete/{id}", authorRepo.HandleDeleteById)
+	router := mux.NewRouter()
+	router.HandleFunc("/authors", authorRepo.HandleFindAll).Methods("GET")
+	router.HandleFunc("/authors/{id}", authorRepo.HandleFindById).Methods("GET")
+	router.HandleFunc("/authors/name/{name}", authorRepo.HandleFindByName).Methods("GET")
+	router.HandleFunc("/authors/{id}/books", authorRepo.HandleGetByIdWithBooks).Methods("GET")
+	router.HandleFunc("/authors/non-deleted", authorRepo.HandleGetNonDeleted).Methods("GET")
+	router.HandleFunc("/authors/sum", authorRepo.HandleSumOfAuthor).Methods("GET")
+	router.HandleFunc("/authors", authorRepo.HandleInsert).Methods("POST")
+	router.HandleFunc("/authors", authorRepo.HandleUpdate).Methods("PUT")
+	router.HandleFunc("/authors", authorRepo.HandleDelete).Methods("DELETE")
+	router.HandleFunc("/authors/{id}", authorRepo.HandleDeleteById).Methods("DELETE")
 
-	http.HandleFunc("/books", bookRepo.HandleFindAll)
-	http.HandleFunc("/books/{id}", bookRepo.HandleFindById)
-	http.HandleFunc("/books/title/{title}", bookRepo.HandleFindByTitle)
-	http.HandleFunc("/books/non-deleted", bookRepo.HandleGetNonDeleted)
-	http.HandleFunc("/books/authors/{id}", bookRepo.HandleFindByAuthorID)
-	http.HandleFunc("/books/withauthorname/{id}", bookRepo.HandleGetByIdWithAuthorName)
-	http.HandleFunc("/books/sum", bookRepo.HandleSumOfBooks)
-	http.HandleFunc("/books/insert", bookRepo.HandleInsert)
-	http.HandleFunc("/books/update", bookRepo.HandleUpdate)
-	http.HandleFunc("/books/delete", bookRepo.HandleDelete)
-	http.HandleFunc("/books/delete/{id}", bookRepo.HandleDeleteById)
+	router.HandleFunc("/books", bookRepo.HandleFindAll).Methods("GET")
+	router.HandleFunc("/books/{id}", bookRepo.HandleFindById).Methods("GET")
+	router.HandleFunc("/books/title/{title}", bookRepo.HandleFindByTitle).Methods("GET")
+	router.HandleFunc("/books/author/{id}", bookRepo.HandleFindByAuthorID).Methods("GET")
+	router.HandleFunc("/books/withauthorname/{id}", bookRepo.HandleGetByIdWithAuthorName).Methods("GET")
+	router.HandleFunc("/books/non-deleted", bookRepo.HandleGetNonDeleted).Methods("GET")
+	router.HandleFunc("/books/sum", bookRepo.HandleSumOfBooks).Methods("GET")
+	router.HandleFunc("/books", bookRepo.HandleInsert).Methods("POST")
+	router.HandleFunc("/books", bookRepo.HandleUpdate).Methods("PUT")
+	router.HandleFunc("/books", bookRepo.HandleDelete).Methods("DELETE")
+	router.HandleFunc("/books/{id}", bookRepo.HandleDeleteById).Methods("DELETE")
+	http.Handle("/", router)
+
 	log.Println("Server started on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 

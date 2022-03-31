@@ -4,6 +4,8 @@ go 1.17
 
 require gorm.io/gorm v1.23.3
 
+require github.com/gorilla/mux v1.8.0 // indirect
+
 require (
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.10.1 // indirect
