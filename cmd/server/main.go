@@ -7,6 +7,7 @@ import (
 	postgres "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/store/common/db"
 	"github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/store/domain/author"
 	"github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/store/domain/book"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"github.com/joho/godotenv"
@@ -38,6 +39,11 @@ func main() {
 
 	//Handle requests
 	router := mux.NewRouter()
+	//Router validations
+	handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	router.Use(loggingMiddleware)
+
 	router.HandleFunc("/authors", authorRepo.HandleFindAll).Methods("GET")
 	router.HandleFunc("/authors/{id}", authorRepo.HandleFindById).Methods("GET")
 	router.HandleFunc("/authors/name/{name}", authorRepo.HandleFindByName).Methods("GET")
@@ -65,4 +71,12 @@ func main() {
 	log.Println("Server started on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
+}
+
+//loggingMiddleware is a middleware that logs the request as it goes in and the response as it goes out.
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.Method, r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
 }
