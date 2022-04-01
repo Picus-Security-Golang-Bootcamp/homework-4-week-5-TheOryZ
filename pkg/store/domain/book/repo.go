@@ -154,8 +154,7 @@ func (b *BookRepository) HandleFindById(w http.ResponseWriter, r *http.Request) 
 	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	book := b.FindById(idNumber)
-	var model apiModel.Book
-	model = apiModel.Book{
+	model := apiModel.Book{
 		ID:             int64(book.ID),
 		Title:          book.Title,
 		NumberOfStocks: int64(book.NumberOfStocks),
