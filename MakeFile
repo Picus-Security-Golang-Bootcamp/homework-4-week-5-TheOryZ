@@ -1,3 +1,4 @@
+.PHONY: models generate
 
 # ==============================================================================
 # Go migrate postgresql
@@ -7,6 +8,6 @@
 models:
 	$(call print-target)
 	find ./pkg/api/models -type f -not -name '*_test.go' -delete
-	swagger generate model -m api -f /pkg/api/swagger/swag.yml -t pkg/api/models
+	swagger generate model -m api -f ./pkg/api/swagger/swag.yml -t ./pkg/api/models
 
 generate: models
