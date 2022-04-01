@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	apiModel "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/api/models/api"
 	model "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/model"
 	services "github.com/Picus-Security-Golang-Bootcamp/homework-4-week-5-TheOryZ/pkg/service"
 	"github.com/gorilla/mux"
@@ -121,9 +122,16 @@ func (a *AuthorRepository) SumOfAuthor() int64 {
 //HandleFindAll Find all authors
 func (a *AuthorRepository) HandleFindAll(w http.ResponseWriter, r *http.Request) {
 	authors := a.FindAll()
+	var model []apiModel.Author
+	for _, author := range authors {
+		model = append(model, apiModel.Author{
+			ID:   int64(author.ID),
+			Name: author.Name,
+		})
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(authors)
+	json.NewEncoder(w).Encode(model)
 }
 
 //HandleFindById Find by id
@@ -132,9 +140,12 @@ func (a *AuthorRepository) HandleFindById(w http.ResponseWriter, r *http.Request
 	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	author := a.FindById(idNumber)
+	var model apiModel.Author
+	model.ID = int64(author.ID)
+	model.Name = author.Name
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(author)
+	json.NewEncoder(w).Encode(model)
 }
 
 //HandleFindByName Find by name
@@ -142,17 +153,31 @@ func (a *AuthorRepository) HandleFindByName(w http.ResponseWriter, r *http.Reque
 	urlParams := mux.Vars(r)
 	name := urlParams["name"]
 	authors := a.FindByName(name)
+	var model []apiModel.Author
+	for _, author := range authors {
+		model = append(model, apiModel.Author{
+			ID:   int64(author.ID),
+			Name: author.Name,
+		})
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(authors)
+	json.NewEncoder(w).Encode(model)
 }
 
 //HandleGetNonDeleted Get non deleted authors
 func (a *AuthorRepository) HandleGetNonDeleted(w http.ResponseWriter, r *http.Request) {
 	authors := a.GetNonDeleted()
+	var model []apiModel.Author
+	for _, author := range authors {
+		model = append(model, apiModel.Author{
+			ID:   int64(author.ID),
+			Name: author.Name,
+		})
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(authors)
+	json.NewEncoder(w).Encode(model)
 }
 
 //HandleGetByIdWithBooks Get author by id and with books
@@ -161,17 +186,27 @@ func (a *AuthorRepository) HandleGetByIdWithBooks(w http.ResponseWriter, r *http
 	id := urlParams["id"]
 	idNumber, _ := strconv.Atoi(id)
 	books := a.GetByIdWithBooks(idNumber)
+	var model []apiModel.BookWithAuthorName
+	for _, book := range books {
+		model = append(model, apiModel.BookWithAuthorName{
+			ID:    int64(book.ID),
+			Title: book.Title,
+			Name:  book.Name,
+		})
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(books)
+	json.NewEncoder(w).Encode(model)
 }
 
 //HandleSumOfAuthor Get sum of all authors
 func (a *AuthorRepository) HandleSumOfAuthor(w http.ResponseWriter, r *http.Request) {
 	sum := a.SumOfAuthor()
+	var model apiModel.CountModel
+	model.Sum = sum
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(sum)
+	json.NewEncoder(w).Encode(model)
 }
 
 //HandleInsert Insert new author
